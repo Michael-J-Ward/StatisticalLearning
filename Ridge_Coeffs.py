@@ -3,6 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.linear_model import Ridge
+from sklearn.preprocessing import normalize
 
 # loading and preparing data
 Credit = pd.read_csv('Data/Credit.csv')
@@ -41,29 +42,35 @@ for a in alphas:
     clf.fit(X.values, y)
     coefs.append(clf.coef_)
 
+ax = plt.gca()
 
-def make_plot():
-    ax = plt.gca()
-
-    ax.plot(alphas, coefs)
-    ax.set_xscale('log')
-    plt.xlabel('alpha')
-    plt.ylabel('weights')
-    plt.title('Ridge coefficients as a function of the regularization')
-    plt.axis('tight')
-    plt.legend(coef_names)
-    plt.show()
-
-make_plot()
+ax.plot(alphas, coefs)
+ax.set_xscale('log')
+plt.xlabel('alpha')
+plt.ylabel('weights')
+plt.title('Ridge coefficients without Normalization')
+plt.axis('tight')
+plt.legend(coef_names)
+plt.show()
 
 # now with normalization
 y = (y-y.mean())/y.std()
-clf = Ridge(normalize=True)
+exog = normalize(X.values)
+clf = Ridge()
 coefs = []
 
 for a in alphas:
-    clf.set_params(alpha=a, normalize=True)
+    clf.set_params(alpha=a)
     clf.fit(X.values, y)
     coefs.append(clf.coef_)
 
-make_plot()
+ax = plt.gca()
+
+ax.plot(alphas, coefs)
+ax.set_xscale('log')
+plt.xlabel('alpha')
+plt.ylabel('weights')
+plt.title('Ridge coefficients with Normalization')
+plt.axis('tight')
+plt.legend(coef_names)
+plt.show()
